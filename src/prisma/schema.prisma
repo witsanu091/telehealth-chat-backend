@@ -1,0 +1,6 @@
+model Chat {
+  room      String
+  sender    String
+  message   String
+  created_on DateTime @default(now())
+}

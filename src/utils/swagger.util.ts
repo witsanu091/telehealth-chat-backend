@@ -1,39 +1,53 @@
-import swagger from '@fastify/swagger';
-import swaggerUI from '@fastify/swagger-ui';
-import dotenv from 'dotenv'
+import { FastifyInstance } from "fastify";
+import fastifySwagger from "@fastify/swagger";
+import fastifySwaggerUi from "@fastify/swagger-ui";
+import fastifyAutoload from "@fastify/autoload";
 
-dotenv.config()
 
-export default async (fastify: any) => {
-    const port = process.env.PORT
-    fastify.register(swagger, {
+import { config } from "../config";
+import path from "path";
+
+export const setupSwagger = (app: FastifyInstance): void => {
+    const HOST = process.env.HOST || "localhost";
+    const PORT = config.PORT || 3000;
+
+    app.register(fastifyAutoload, {
+        dir: path.join(__dirname, '../', 'routes')
+    })
+    // app.ready()
+    // app.swagger()
+
+
+    app.register(fastifySwagger, {
         swagger: {
-            openapi: '3.0.0',
             info: {
-                title: 'Telehealth Chat API',
-                version: '1.0.0',
-                description: 'API documentation for the Telehealth Chat system',
+                title: "Socket.IO Chat API",
+                description: "API Documentation for Socket.IO Chat System",
+                version: "1.0.0",
             },
-            servers: [
-                {
-                    url: `http://localhost:${port}`,
-                },
+            host: `${HOST}:${PORT}`,
+            schemes: process.env.NODE_ENV === "production" ? ["https"] : ["http"],
+            consumes: ["application/json"],
+            produces: ["application/json"],
+            tags: [
+                { name: "Authentication", description: "Endpoints for authentication" },
+                { name: "Chat", description: "Chat-related endpoints" },
             ],
         },
     });
 
-    fastify.register(swaggerUI, {
-        routePrefix: '/api-docs', // URL for Swagger UI
+    app.register(fastifySwaggerUi as any, {
+        routePrefix: "api-docs",
+        uiConfig: {
+            docExpansion: "full",
+        },
+        uiHooks: {
+            onRequest: (request: any, reply: any, next: any) => next(),
+            preHandler: (request: any, reply: any, next: any) => next(),
+        },
         staticCSP: true,
         transformStaticCSP: (header: any) => header,
-        uiConfig: {
-            docExpansion: 'full',
-            deepLinking: false,
-        },
+        exposeRoute: true,
 
     });
-
-    console.log(`Swagger docs available at http://localhost:${port}/api-docs`);
 };
-
-

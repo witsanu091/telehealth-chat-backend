@@ -18,7 +18,6 @@ const PORT = parseInt(process.env.PORT || '', 10) || 3000;
         await connectToDatabase();
         console.log('✅ Database connection established.');
 
-        // Setup WebSocket
         fastify.ready().then(() => {
             console.log('🔄 Setting up WebSocket...');
             setupSocketIO(fastify.io);

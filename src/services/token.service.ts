@@ -7,8 +7,7 @@ export const createToken = (payload: Record<string, unknown>): string => {
 
 
 interface DecodedToken extends JwtPayload {
-    userId?: string;
-    // Add more fields as per your token structure
+    sender?: string;
 }
 
 export const validateToken = (token: string): DecodedToken | null => {

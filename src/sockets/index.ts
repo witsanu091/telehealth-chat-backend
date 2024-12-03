@@ -14,25 +14,26 @@ export async function setupSocketIO(io: Server) {
     subClient.on('connect', () => console.log('Redis subClient connected'));
 
 
-    // io.use((socket, next) => {
-    //     let token = socket.handshake.headers.token;
+    io.use((socket, next) => {
+        let token = socket.handshake.headers.token;
 
-    //     console.log('Received token:', token);
-    //     if (!token) {
-    //         console.warn('⚠️ No token provided');
-    //         return next(new Error('Authentication error: No token provided'));
-    //     }
-    //     const tokenString = Array.isArray(token) ? token[0] : token;
-    //     const decoded = validateToken(tokenString);
-    //     if (!decoded) {
-    //         console.warn('⚠️ Invalid token');
-    //         return next(new Error('Authentication error: Invalid token'));
-    //     }
+        console.log('Received token:', token);
+        if (!token) {
+            console.warn('⚠️ No token provided');
+            return next(new Error('Authentication error: No token provided'));
+        }
+        const tokenString = Array.isArray(token) ? token[0] : token;
+        const decoded = validateToken(tokenString);
+        if (!decoded) {
+            console.warn('⚠️ Invalid token');
+            return next(new Error('Authentication error: Invalid token'));
+        }
 
-    //     socket.data.user = decoded;
-    //     console.log(`✅ Token validated for user: ${decoded.userId || 'unknown'}`);
-    //     next();
-    // });
+        // socket.data.sender = decoded.sender;
+        socket.data = decoded;
+        console.log(`✅ Token validated for user: ${decoded.room || 'unknown'}`);
+        next();
+    });
 
     io.on('connection', (socket) => {
         console.log(`🔗 Client connected: ${socket.id}`);

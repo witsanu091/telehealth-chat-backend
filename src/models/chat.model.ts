@@ -1,16 +1,18 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IChat extends Document {
-    room: string;
-    sender: string;
-    message: string;
+    room: String,
+    sender: String,
+    message: String,
+    event: String,
     created_on: Date;
 }
 
 const ChatSchema: Schema = new Schema({
-    room: { type: String, required: true },
-    sender: { type: String, required: true },
-    message: { type: String, required: true },
+    room: String,
+    sender: String,
+    message: String,
+    event: String,
     created_on: { type: Date, default: Date.now },
 });
 

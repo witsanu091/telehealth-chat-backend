@@ -8,9 +8,16 @@ services:
       - "3000:3000"
     depends_on:
       - redis
+      - db
+    env_file:
+      - .env
+    command: sh -c "npm run build && npm start"
+    volumes:
+      - .:/app
+      - /app/node_modules
     environment:
-      REDIS_URL: redis://redis:6379
-      MONGO_URI: mongodb://mongodb:27017/telehealth
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
 
   redis:
     image: redis:latest
@@ -18,8 +25,21 @@ services:
     ports:
       - "6379:6379"
 
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "27017:27017"
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:

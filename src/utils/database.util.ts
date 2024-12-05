@@ -1,12 +1,20 @@
-import mongoose from 'mongoose';
+import { PrismaClient } from "@prisma/client";
+import { execSync } from "child_process";
 
-export default async function connectToDatabase() {
-    const mongoUri = process.env.MONGO_URI || '';
-    if (!mongoUri) {
-        throw new Error('❌ MongoDB URI is not defined in environment variables.');
+const prisma = new PrismaClient();
+
+/**
+ * Ensures the database schema matches the Prisma schema
+ */
+export async function migrateDatabase() {
+    try {
+        console.log("Checking and migrating database schema...");
+        execSync("npx prisma db push", { stdio: "inherit" });
+        console.log("Database migration completed successfully.");
+    } catch (error) {
+        console.error("Error during database migration:", error);
+        throw error;
     }
-
-    // Connect to MongoDB
-    await mongoose.connect(mongoUri);
-    console.log('✅ MongoDB connected');
 }
+
+export default prisma;

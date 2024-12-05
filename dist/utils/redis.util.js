@@ -14,18 +14,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.connectRedis = void 0;
 const redis_1 = require("redis");
+const config_1 = require("../config");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const connectRedis = () => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("🚀 Redis URL:", process.env.REDIS_URL);
+    const redisHost = config_1.config.REDIS_URL;
     try {
-        const pubClient = (0, redis_1.createClient)({ url: process.env.REDIS_URL });
+        const pubClient = (0, redis_1.createClient)({ url: redisHost });
         const subClient = pubClient.duplicate();
         pubClient.on('error', (err) => console.error('Redis PubClient Error:', err));
         subClient.on('error', (err) => console.error('Redis SubClient Error:', err));
-        yield pubClient.connect();
-        yield subClient.connect();
         console.log('✅ Redis connected');
+        yield Promise.all([pubClient.connect(), subClient.connect()]);
         return { pubClient, subClient };
     }
     catch (err) {

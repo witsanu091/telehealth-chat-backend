@@ -1,8 +1,9 @@
 import dotenv from 'dotenv';
 import createFastifyServer from './server';
-import connectToDatabase from './utils/database.util';
+
 import { setupSocketIO } from './sockets/index';
 import { Server as SocketIOServer } from "socket.io";
+import { migrateDatabase } from './utils/database.util';
 
 
 dotenv.config();
@@ -15,7 +16,7 @@ const PORT = parseInt(process.env.PORT || '', 10) || 3000;
 
         // Connect to the database
         console.log('🔄 Connecting to the database...');
-        await connectToDatabase();
+        // await migrateDatabase();
         console.log('✅ Database connection established.');
 
         fastify.ready().then(() => {

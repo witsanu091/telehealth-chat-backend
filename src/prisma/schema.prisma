@@ -1,6 +1,33 @@
+generator client {
+  provider        = "prisma-client-js"
+  binaryTargets   = ["native", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
 model Chat {
-  room      String
-  sender    String
-  message   String
+  id         Int      @id @default(autoincrement())
+  room       String
+  sender     String
+  message    String
+  event      String
   created_on DateTime @default(now())
+}
+
+model Room {
+  room_id    String   @id
+  name       String?
+  members    Member[] 
+  created_on DateTime @default(now())
+}
+
+model Member {
+  id         Int      @id @default(autoincrement())
+  user_id    String
+  socket_id  String
+  room_id    String
+  room       Room     @relation(fields: [room_id], references: [room_id]) // Corrected relation
 }

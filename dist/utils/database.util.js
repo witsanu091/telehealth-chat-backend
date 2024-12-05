@@ -9,19 +9,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateToken = void 0;
-const token_service_1 = require("../services/token.service");
-const generateToken = (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
-    const { patient_id, consult_id, room } = request.body;
-    if (!room || (!patient_id && !consult_id)) {
-        return reply.status(400).send({ error: 'Missing required fields' });
-    }
-    const payload = {
-        room,
-        role: patient_id ? 'consult' : 'patient',
-        id: patient_id || consult_id,
-    };
-    const token = (0, token_service_1.createToken)(payload);
-    reply.send({ chat_token: token });
-});
-exports.generateToken = generateToken;
+exports.migrateDatabase = migrateDatabase;
+const client_1 = require("@prisma/client");
+const child_process_1 = require("child_process");
+const prisma = new client_1.PrismaClient();
+/**
+ * Ensures the database schema matches the Prisma schema
+ */
+function migrateDatabase() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            console.log("Checking and migrating database schema...");
+            (0, child_process_1.execSync)("npx prisma db push", { stdio: "inherit" });
+            console.log("Database migration completed successfully.");
+        }
+        catch (error) {
+            console.error("Error during database migration:", error);
+            throw error;
+        }
+    });
+}
+exports.default = prisma;

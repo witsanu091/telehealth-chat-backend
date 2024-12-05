@@ -1,55 +1,8 @@
 import { FastifyInstance } from 'fastify';
 
-import { saveMessage, getMessages } from '../controllers/chat.controller';
+import { getMessages, getRoomMessages } from '../controllers/chat.controller';
 
 export default async function chatRoutes(fastify: FastifyInstance) {
-
-    /**
-     * @swagger
-     * components:
-     *   schemas:
-     *     Chat:
-     *       type: object
-     *       required:
-     *         - room
-     *         - sender
-     *         - message
-     *       properties:
-     *         room:
-     *           type: string
-     *           description: Chat room ID
-     *         sender:
-     *           type: string
-     *           description: Sender ID
-     *         message:
-     *           type: string
-     *           description: The message content
-     *         timestamp:
-     *           type: string
-     *           format: date-time
-     *           description: The timestamp of the message
-     */
-
-    /**
-     * @swagger
-     * /api/chat/message:
-     *   post:
-     *     summary: Save a message
-     *     tags: [Chat]
-     *     requestBody:
-     *       required: true
-     *       content:
-     *         application/json:
-     *           schema:
-     *             $ref: '#/components/schemas/Chat'
-     *     responses:
-     *       201:
-     *         description: The message was successfully saved
-     *       500:
-     *         description: Server error
-     */
-    fastify.post('/message', saveMessage);
-
     /**
      * @swagger
      * /api/chat/messages/{room}:
@@ -76,6 +29,8 @@ export default async function chatRoutes(fastify: FastifyInstance) {
      *         description: Server error
      */
     fastify.get('/messages/:room', getMessages);
+
+    fastify.get("/chats/:room_id", getRoomMessages)
 }
 
-// export default router;
+

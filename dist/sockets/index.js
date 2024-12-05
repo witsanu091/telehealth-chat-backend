@@ -9,33 +9,42 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeSocket = void 0;
-const chat_events_1 = require("../events/chat.events");
+exports.setupSocketIO = setupSocketIO;
 const redis_adapter_1 = require("@socket.io/redis-adapter");
 const redis_util_1 = require("../utils/redis.util");
-const initializeSocket = (io) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
+const chat_service_1 = require("../services/chat.service");
+const token_service_1 = require("../services/token.service");
+function setupSocketIO(io) {
+    return __awaiter(this, void 0, void 0, function* () {
         const { pubClient, subClient } = yield (0, redis_util_1.connectRedis)();
         io.adapter((0, redis_adapter_1.createAdapter)(pubClient, subClient));
-        console.log('✅ Socket.IO Redis adapter initialized');
+        console.log('✅ Redis connected');
+        pubClient.on('connect', () => console.log('Redis pubClient connected'));
+        subClient.on('connect', () => console.log('Redis subClient connected'));
+        io.use((socket, next) => {
+            let token = socket.handshake.headers.token;
+            console.log('Received token:', token);
+            if (!token) {
+                console.warn('⚠️ No token provided');
+                return next(new Error('Authentication error: No token provided'));
+            }
+            const tokenString = Array.isArray(token) ? token[0] : token;
+            const decoded = (0, token_service_1.validateToken)(tokenString);
+            if (!decoded) {
+                console.warn('⚠️ Invalid token');
+                return next(new Error('Authentication error: Invalid token'));
+            }
+            // socket.data.sender = decoded.sender;
+            socket.data = decoded;
+            console.log(`✅ Token validated for user: ${decoded.room || 'unknown'}`);
+            next();
+        });
         io.on('connection', (socket) => {
             console.log(`🔗 Client connected: ${socket.id}`);
-            // Log handshake query
-            console.log('Handshake query:', socket.handshake.query);
-            // จัดการ Events
-            (0, chat_events_1.handleChatEvents)(socket, io);
-            // Log errors on disconnect
-            socket.on('disconnect', (reason) => {
-                console.log(`❌ Client disconnected: ${socket.id}, reason: ${reason}`);
-            });
-            socket.on('error', (err) => {
-                console.error('❌ Socket error:', err);
+            (0, chat_service_1.handleChatEvents)(socket, io);
+            socket.on('disconnect', () => {
+                console.log(`❌ Client disconnected: ${socket.id}`);
             });
         });
-    }
-    catch (err) {
-        console.error('❌ Socket.IO initialization failed:', err);
-        throw new Error('Socket.IO setup failed');
-    }
-});
-exports.initializeSocket = initializeSocket;
+    });
+}

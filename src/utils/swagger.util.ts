@@ -34,6 +34,7 @@ export const setupSwagger = (app: FastifyInstance): void => {
                 { name: "Chat", description: "Chat-related endpoints" },
             ],
         },
+
     });
 
     app.register(fastifySwaggerUi as any, {

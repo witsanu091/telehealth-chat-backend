@@ -3,14 +3,13 @@ import fastifySocketIO from 'fastify-socket.io';
 import { setupSwagger } from './utils/swagger.util';
 import chatRoutes from './routes/chat.routes';
 import tokenRoutes from './routes/token.routes';
+import { migrateDatabase } from './utils/database.util';
 // import fastifyFormbody from "@fastify/formbody";
 
 
 export default function createFastifyServer() {
 
-
     const app = fastify({ logger: true });
-    // app.register(fastifyFormbody);
 
     app.register(fastifySocketIO, {
         cors: {

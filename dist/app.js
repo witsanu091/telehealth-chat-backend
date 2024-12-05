@@ -12,58 +12,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const fastify_1 = __importDefault(require("fastify"));
-const socket_io_1 = require("socket.io");
 const dotenv_1 = __importDefault(require("dotenv"));
-const http_1 = require("http");
-const config_1 = require("./config");
-const token_routes_1 = __importDefault(require("./routes/token.routes"));
-const sockets_1 = require("./sockets");
-const mongoose_1 = __importDefault(require("mongoose"));
+const server_1 = __importDefault(require("./server"));
+const index_1 = require("./sockets/index");
 dotenv_1.default.config();
-const app = (0, fastify_1.default)({ logger: true });
-const httpServer = (0, http_1.createServer)(app.server);
-const io = new socket_io_1.Server(httpServer, {
-    cors: {
-        origin: '*',
-        methods: ['GET', 'POST'],
-    },
-});
-// Default Route
-app.get('/', (request, reply) => __awaiter(void 0, void 0, void 0, function* () {
-    return { message: 'Welcome to the Telehealth Chat API' };
-}));
-// Initialize Socket.IO
-(0, sockets_1.initializeSocket)(io);
-// Register Routes
-app.register(token_routes_1.default, { prefix: '/api' });
-// MongoDB Connection
-const connectToDatabase = () => __awaiter(void 0, void 0, void 0, function* () {
+const PORT = parseInt(process.env.PORT || '', 10) || 3000;
+(() => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield mongoose_1.default.connect(process.env.MONGO_URI || '');
-        console.log('✅ Connected to MongoDB');
-    }
-    catch (err) {
-        console.error('❌ Error connecting to MongoDB:', err);
-        process.exit(1);
-    }
-});
-// Start Server
-const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield connectToDatabase();
-        const port = config_1.config.PORT || 8080;
-        app.listen({ port, host: '127.0.0.1' }, (err, address) => {
-            if (err) {
-                app.log.error(err);
-                process.exit(1);
-            }
-            app.log.info(`Server running at ${address}`);
+        const { fastify } = (0, server_1.default)();
+        // Connect to the database
+        console.log('🔄 Connecting to the database...');
+        // await migrateDatabase();
+        console.log('✅ Database connection established.');
+        fastify.ready().then(() => {
+            console.log('🔄 Setting up WebSocket...');
+            (0, index_1.setupSocketIO)(fastify.io);
+            console.log('✅ WebSocket setup complete.');
         });
+        yield fastify.listen({ port: PORT, host: '0.0.0.0' });
+        console.log(`🚀 Server running at http://localhost:${PORT}`);
+        console.log(`📚 API documentation at http://localhost:${PORT}/api-docs`);
     }
-    catch (err) {
-        app.log.error(err);
+    catch (error) {
+        console.error('❌ Error starting server:', error);
         process.exit(1);
     }
-});
-startServer();
+}))();

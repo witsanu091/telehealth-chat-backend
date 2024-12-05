@@ -1,8 +1,7 @@
 import { Server } from 'socket.io';
 import { createAdapter } from '@socket.io/redis-adapter';
 import { connectRedis } from '../utils/redis.util';
-import Chat from '../models/chat.model';
-import { handleChatEvents } from '../events/chat.events';
+import { handleChatEvents } from '../services/chat.service';
 import { validateToken } from '../services/token.service';
 
 export async function setupSocketIO(io: Server) {

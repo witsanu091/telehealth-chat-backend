@@ -160,7 +160,7 @@ Sends a message to the chat room.
 
 #### Client Code
 ```javascript
-socket.emit("message", { room: "room1", message: "Hello, world!" });
+socket.emit("message", { room: "room1", message: "Hello, world!" , sender : "user" });
 ```
 
 ---

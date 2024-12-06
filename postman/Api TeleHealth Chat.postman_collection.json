@@ -1,0 +1,163 @@
+{
+	"info": {
+		"_postman_id": "a8b3cb18-46e5-40b0-9cef-1dc3d1b8d942",
+		"name": "Api TeleHealth Chat",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10805456"
+	},
+	"item": [
+		{
+			"name": "API",
+			"item": [
+				{
+					"name": "Api Generate Token Patient",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json()",
+									"",
+									"pm.environment.set('tokenId', res.chat_token)",
+									"pm.globals.set('tokenId', res.chat_token)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"patient_id\": \"patient123\",\n  \"room\": \"20241205T5VCL6\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_local}}/api/token/generate-token",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"api",
+								"token",
+								"generate-token"
+							]
+						},
+						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/token/consult \\\n-H \"Content-Type: application/json\" \\\n-d '{\"patient_id\": \"123\", \"room\": \"room1\"}'\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Api Generate Token Consult",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json()",
+									"",
+									"pm.environment.set('tokenId', res.chat_token)",
+									"pm.globals.set('tokenId', res.chat_token)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"consult_id\": \"consult123\",\n  \"room\": \"20241205T5VCL6\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_local}}/api/token/generate-token",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"api",
+								"token",
+								"generate-token"
+							]
+						},
+						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/token/consult \\\n-H \"Content-Type: application/json\" \\\n-d '{\"patient_id\": \"123\", \"room\": \"room1\"}'\n"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Get Chat",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"room\": \"room1\",\n    \"sender\": \"user1\",\n    \"message\": \"user1 sent message to user2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/chat/message",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"chat",
+						"message"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get test connection",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url_local}}",
+					"host": [
+						"{{url_local}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

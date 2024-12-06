@@ -15,7 +15,10 @@ export const handleChatEvents = (socket: Socket, io: Server) => {
             roomData = await RoomRepository.createRoom({ room_id: room });
         }
 
-        const isMember = roomData.members.some((member: any) => member.user_id === id);
+        const isMember = roomData.members.some((member: any) => {
+            console.log("🚀  member.user_id:", member.user_id)
+            member.user_id === id
+        });
         if (roomData.members.length >= 2) {
             socket.emit("error", { message: "Room is full!" });
             return;

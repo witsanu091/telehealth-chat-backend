@@ -48,6 +48,8 @@ export default async function tokenRoutes(fastify: FastifyInstance) {
                         type: "object",
                         properties: {
                             chat_token: { type: "string", description: "JWT chat token" },
+                            room_id: { type: "string", description: "room_id chat token" },
+
                         },
                     },
                     400: {

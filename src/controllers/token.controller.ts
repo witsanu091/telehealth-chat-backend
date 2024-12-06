@@ -17,7 +17,7 @@ export const generateToken = async (request: FastifyRequest, reply: FastifyReply
         role: patient_id ? 'consult' : 'patient',
         id: patient_id || consult_id,
     };
-    const token = createToken(payload);
-    reply.send({ chat_token: token });
+    const { token, room_id } = await createToken(payload);
+    reply.send({ chat_token: token, room_id: room_id });
 };
 

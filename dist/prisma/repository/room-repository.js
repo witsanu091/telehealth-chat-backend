@@ -15,11 +15,13 @@ class RoomRepository {
     static findRoomById(data) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const result = yield prisma.room.findUnique({
-                    where: { room_id: data.room_id },
+                let roomData = yield prisma.room.findUnique({
+                    where: {
+                        room_id: data.room,
+                    },
                     include: { members: true },
                 });
-                return result;
+                return roomData;
             }
             catch (error) {
                 console.error("[Error] Finding room:", error);

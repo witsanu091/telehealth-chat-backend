@@ -21,7 +21,7 @@ const generateToken = (request, reply) => __awaiter(void 0, void 0, void 0, func
         role: patient_id ? 'consult' : 'patient',
         id: patient_id || consult_id,
     };
-    const token = (0, token_service_1.createToken)(payload);
-    reply.send({ chat_token: token });
+    const { token, room_id } = yield (0, token_service_1.createToken)(payload);
+    reply.send({ chat_token: token, room_id: room_id });
 });
 exports.generateToken = generateToken;

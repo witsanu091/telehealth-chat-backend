@@ -5,8 +5,10 @@ const prisma = new PrismaClient();
 export default class RoomRepository {
   static async findRoomById(data: any) {
     try {
-      let roomData = await prisma.room.findFirst({
-        where: { room_id: data.room },
+      let roomData = await prisma.room.findUnique({
+        where: {
+          room_id: data.room_id,
+        },
         include: { members: true },
       });
       return roomData

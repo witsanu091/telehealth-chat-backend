@@ -20,12 +20,16 @@ const chat_repository_1 = __importDefault(require("../prisma/repository/chat-rep
 const handleChatEvents = (socket, io) => {
     let { room, id } = socket.data;
     socket.on("join", () => __awaiter(void 0, void 0, void 0, function* () {
-        let roomData = yield room_repository_1.default.findRoomById(room);
+        let roomData = yield room_repository_1.default.findRoomById({ room_id: room });
         if (!roomData) {
             room = (0, utils_1.generateRoomId)();
             roomData = yield room_repository_1.default.createRoom({ room_id: room });
         }
         const isMember = roomData.members.some((member) => member.user_id === id);
+        if (roomData.members.length >= 2) {
+            socket.emit("error", { message: "Room is full!" });
+            return;
+        }
         if (!isMember) {
             yield member_repository_1.default.addMember({
                 user_id: id,
@@ -61,7 +65,10 @@ const handleChatEvents = (socket, io) => {
         });
     }));
     socket.on("leave", () => __awaiter(void 0, void 0, void 0, function* () {
-        yield member_repository_1.default.deleteMemberBySocketId(socket.id);
+        const roomData = yield room_repository_1.default.findRoomById({ room_id: room, user_id: id });
+        if (roomData) {
+            yield member_repository_1.default.deleteMemberBySocketId(socket.id);
+        }
         socket.leave(room);
         io.to(room).emit("notification", { user_id: id, event: "leave" });
         yield chat_repository_1.default.addChat({

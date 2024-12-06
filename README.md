@@ -190,10 +190,10 @@ socket.on("message", (data) => {
 ---
 
 ### Steps
-1. Initialize Prisma:
-   ```bash
-   npx prisma init
-   ```
+1. After start app and run docker-compose:
+  - check server database to run already.
+  - open new terminal
+
 
 2. Define your schema in `prisma/schema.prisma`.
 

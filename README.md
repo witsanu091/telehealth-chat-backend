@@ -195,7 +195,7 @@ socket.on("message", (data) => {
   - open new terminal
 
 
-2. Define your schema in `prisma/schema.prisma`.
+2. Define your schema in `src/prisma/schema.prisma`.
 
 3. Run the migration to create tables:
    ```bash

@@ -180,6 +180,45 @@ socket.on("message", (data) => {
 
 ---
 
+## Migration Steps for Data
+
+### Prerequisites
+- Ensure MySQL is installed and running.
+- Set up the Prisma schema for your database.
+- Install Prisma CLI: `npm install -g prisma`.
+
+---
+
+### Steps
+1. Initialize Prisma:
+   ```bash
+   npx prisma init
+   ```
+
+2. Define your schema in `prisma/schema.prisma`.
+
+3. Run the migration to create tables:
+   ```bash
+   npx prisma migrate dev --name init
+   ```
+
+4. Seed the database (if required):
+   ```bash
+   npx prisma db seed
+   ```
+
+5. Generate the Prisma client:
+   ```bash
+   npx prisma generate
+   ```
+
+6. Verify the database structure:
+   ```bash
+   npx prisma studio
+   ```
+
+---
+
 ## Notes
 - Ensure the chat token is valid before making requests.
 - All requests should be sent to the `/api` prefix.
